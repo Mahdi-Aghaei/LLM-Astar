@@ -13,24 +13,25 @@ class LLMAStar:
 
     GPT_METHOD = "PARSE"
     GPT_LLMASTAR_METHOD = "LLM-A*"
+    def __init__(self, llm='gpt', prompt='standard'):
+        self.llm = llm
+        if llm == 'gpt':
+            self.model = ChatGPT()
+        elif llm == 'llama':
+            self.model = Llama3()
+        elif llm == 'mistral':
+            from llmastar.model.my_mistral import MyMistral
+            self.model = MyMistral(prompt=prompt)
+        else:
+            raise ValueError("Invalid LLM model. Choose 'gpt', 'llama', or 'mistral'.")
+        
+        assert prompt in ['standard', 'cot', 'repe'], "نوع پرس و جو معتبر نیست. 'standard', 'cot', یا 'repe' را انتخاب کنید."
+        self.prompt = prompt
     def get_llm_model(llm='mistral', prompt='standard'):
         if llm == 'mistral':
             return MyMistral(prompt=prompt)
         else:
             raise ValueError("Only local models like mistral are supported.")
-    def __init__(self, llm='gpt', prompt='standard'):
-        self.llm = llm
-        if self.llm == 'gpt':
-            self.parser = ChatGPT(method=self.GPT_METHOD, sysprompt=sysprompt_parse, example=example_parse)
-            self.model = ChatGPT(method=self.GPT_LLMASTAR_METHOD, sysprompt="", example=None)
-        elif self.llm == 'llama':
-            self.model = Llama3()
-        else:
-            raise ValueError("مدل LLM معتبر نیست. 'gpt' یا 'llama' را انتخاب کنید.")
-        
-        assert prompt in ['standard', 'cot', 'repe'], "نوع پرس و جو معتبر نیست. 'standard', 'cot', یا 'repe' را انتخاب کنید."
-        self.prompt = prompt
-
     def _parse_query(self, query):
         """پارس کردن ورودی با استفاده از مدل LLM مشخص شده"""
         if isinstance(query, str):
