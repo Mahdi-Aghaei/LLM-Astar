@@ -2,7 +2,7 @@ import json
 import math
 import heapq
 import threading  # برای پردازش موازی
-
+from llmastar.model.my_mistral import MyMistral
 from llmastar.env.search import env, plotting
 from llmastar.model import ChatGPT, Llama3
 from llmastar.utils import is_lines_collision, list_parse
@@ -13,7 +13,11 @@ class LLMAStar:
 
     GPT_METHOD = "PARSE"
     GPT_LLMASTAR_METHOD = "LLM-A*"
-
+    def get_llm_model(llm='mistral', prompt='standard'):
+        if llm == 'mistral':
+            return MyMistral(prompt=prompt)
+        else:
+            raise ValueError("Only local models like mistral are supported.")
     def __init__(self, llm='gpt', prompt='standard'):
         self.llm = llm
         if self.llm == 'gpt':
